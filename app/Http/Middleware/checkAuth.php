@@ -2,10 +2,9 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\User;
 use Closure;
+use http\Client\Curl\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class checkAuth
 {
@@ -19,16 +18,15 @@ class checkAuth
     public function handle(Request $request, Closure $next)
     {
         $token = $request->bearerToken();
-        $user = User::where('api_token', $token)->first();
-        if($user){
+        $user = User::where('api_token', $token)->fisrt();
+        if($user && $token){
             $request->user = $user;
             return $next($request);
-        } else {
-            return response([
-                'body' => [
-                    'message' => 'Unauthorized user'
-                ]
-            ],401);
         }
+        return response([
+            'body' => [
+                'message' => 'Unauthorized'
+            ]
+        ],402);
     }
 }
